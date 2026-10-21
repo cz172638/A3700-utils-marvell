@@ -28,7 +28,13 @@ OUTFILE=$9
 
 CLOCKSPATH=$WTPPATH/tim/ddr
 SYSINITPATH=$WTPPATH/wtmi/sys_init
-SYSINITLOADADDR=`sed -n '/. = 0x1fff[0-9|a-f]*/p' $SYSINITPATH/sys_init.ld | awk '{print $3}' | cut -d ';' -f 1`
+# WTMI_EXEC_ADDR: CM3 entry for a WTMI image that does not use sys_init
+# (the BootROM jumps to the address stored there)
+if [ -n "${WTMI_EXEC_ADDR:-}" ]; then
+	SYSINITLOADADDR=$WTMI_EXEC_ADDR
+else
+	SYSINITLOADADDR=`sed -n '/. = 0x1fff[0-9|a-f]*/p' $SYSINITPATH/sys_init.ld | awk '{print $3}' | cut -d ';' -f 1`
+fi
 
 # All file names extention
 FILEEXT="txt"
